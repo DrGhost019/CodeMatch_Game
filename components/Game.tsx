@@ -8,16 +8,21 @@ import {
   flipCard,
   rematch,
 } from "@/app/actions";
+// ============ ICONS: مسیر عکس‌ها | View: نوع داده‌ای که از سرور می‌آید ===========
 import { ICONS } from "@/lib/icons";
 import type { View } from "@/lib/game";
 
+// ============ صفحه‌هایی که بازیکن می‌بیند: خانه، انتخاب حالت، تنظیمات، ورود با کد، اتاق و خداحافظی ===========
 type Screen = "home" | "mode" | "setup" | "join" | "room" | "bye";
+// ============ شکل پاسخ Server Action ها ===========
 type Res = { ok: boolean; error?: string; code?: string; playerId?: string };
+// ============ مسیرهای SVG: لبخند (خانه‌ی رایگان وسط جدول) و مداد (ویرایش نام) ===========
 const SMILEY =
   '<circle cx="12" cy="12" r="10"/><circle cx="8.6" cy="9.6" r=".7" fill="currentColor"/><circle cx="15.4" cy="9.6" r=".7" fill="currentColor"/><path class="sm sm1" d="M8 14.2c1 1.6 2.4 2.3 4 2.3s3-.7 4-2.3"/><path class="sm sm2" d="M6.8 13.2c1.1 3.4 3 5 5.2 5s4.1-1.6 5.2-5z"/>';
 const PENCIL =
   '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>';
 
+// ============ کامپوننت کوچک برای رسم SVG از رشته‌ی مسیرها ===========
 const Svg = ({ d }: { d: string }) => (
   <svg
     viewBox="0 0 24 24"
@@ -29,6 +34,7 @@ const Svg = ({ d }: { d: string }) => (
     dangerouslySetInnerHTML={{ __html: d }}
   />
 );
+// ============ کادر طلایی وسط صفحه برای منوها ===========
 const Box = ({
   children,
   wide,
@@ -40,6 +46,7 @@ const Box = ({
     <div className={"box" + (wide ? " wide" : "")}>{children}</div>
   </main>
 );
+// ============ دکمه‌ی گزینه‌ای برای انتخاب اندازه‌ی جدول و مدت بازی ===========
 const Chip = ({
   on,
   onClick,
@@ -53,13 +60,17 @@ const Chip = ({
     {children}
   </button>
 );
+// ============ لوگوی بازی ===========
 const Title = () => (
   <h1 className="logo">
     CODE<span>MATCH</span>
   </h1>
 );
 
+// ============ کامپوننت اصلی بازی: همه‌ی صفحه‌ها و وضعیت بازی در همین‌جا مدیریت می‌شود ===========
 export default function Game() {
+  // ============ state ها: صفحه‌ی فعلی، نشست بازیکن (کد اتاق + شناسه)، نمای اتاق از سرور، اختلاف ساعت با سرور، ===========
+  // ============ زمان فعلی، پیام خطا، تنظیمات اتاق، کد واردشده، وضعیت کپی و ویرایش نام ===========
   const [screen, setScreen] = useState<Screen>("home");
   const [sess, setSess] = useState<{ code: string; pid: string } | null>(null);
   const [room, setRoom] = useState<View | null>(null);
@@ -73,12 +84,15 @@ export default function Game() {
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
   useEffect(() => {
+    // ============ پیش‌بارگذاری همه‌ی تصاویر در مرورگر تا موقع رو شدن کارت‌ها تأخیر نداشته باشند ===========
     Object.values(ICONS).forEach((src) => {
       new Image().src = src;
     });
   }, []);
 
   useEffect(() => {
+    // ============ بعد از رفرش صفحه، نشست ذخیره‌شده خوانده می‌شود و بازیکن به همان اتاق برمی‌گردد. ===========
+    // ============ همچنین هر ۲۵۰ میلی‌ثانیه زمان فعلی به‌روز می‌شود (برای تایمر بازی) ===========
     const s = sessionStorage.getItem("cm");
     if (s) {
       setSess(JSON.parse(s));
@@ -89,6 +103,7 @@ export default function Game() {
     return () => clearInterval(t);
   }, []);
 
+  // ============ خروج از اتاق: پاک کردن نشست و برگشت به صفحه‌ی اول ===========
   const leave = () => {
     sessionStorage.removeItem("cm");
     setSess(null);
@@ -97,6 +112,8 @@ export default function Game() {
   };
   useEffect(() => {
     if (!sess) return;
+    // ============ اتصال زنده به سرور با SSE: هر تغییر اتاق (نوبت، کارت، امتیاز) فوراً می‌رسد. ===========
+    // ============ اگر اتاق دیگر وجود نداشته باشد اتصال بسته می‌شود و بازیکن از بازی خارج می‌شود ===========
     const es = new EventSource(`/api/rooms/${sess.code}/events`);
     es.onmessage = (e) => {
       const v: View = JSON.parse(e.data);
@@ -109,10 +126,12 @@ export default function Game() {
     return () => es.close();
   }, [sess]);
 
+  // ============ تغییر صفحه و پاک کردن خطای قبلی ===========
   const go = (s: Screen) => {
     setErr("");
     setScreen(s);
   };
+  // ============ بعد از ساخت یا ورود به اتاق: نشست در sessionStorage ذخیره و وارد اتاق می‌شویم ===========
   const enter = (r: Res) => {
     if (!r.ok) return setErr(r.error ?? "Something went wrong");
     const s = { code: r.code!, pid: r.playerId! };
@@ -120,10 +139,12 @@ export default function Game() {
     setSess(s);
     go("room");
   };
+  // ============ دکمه‌ی خروج: تلاش برای بستن تب؛ اگر نشد پیام خداحافظی نشان داده می‌شود ===========
   const exit = () => {
     window.close();
     setTimeout(() => go("bye"), 200);
   };
+  // ============ کپی کد اتاق؛ اگر clipboard امن در دسترس نبود (مثلاً HTTP روی شبکه‌ی محلی) از روش قدیمی textarea استفاده می‌شود ===========
   const copy = (t: string) => {
     if (navigator.clipboard && window.isSecureContext)
       navigator.clipboard.writeText(t);
@@ -139,6 +160,7 @@ export default function Game() {
     setTimeout(() => setCopied(false), 1500);
   };
 
+  // ============ صفحه‌ی اول: شروع بازی یا خروج ===========
   if (screen === "home")
     return (
       <Box>
@@ -152,6 +174,7 @@ export default function Game() {
         </button>
       </Box>
     );
+  // ============ صفحه‌ی خداحافظی ===========
   if (screen === "bye")
     return (
       <Box>
@@ -159,6 +182,7 @@ export default function Game() {
         <p className="sub">Thanks for playing! You can close this tab.</p>
       </Box>
     );
+  // ============ انتخاب اینکه اتاق بسازیم یا به اتاق دوستمان وارد شویم ===========
   if (screen === "mode")
     return (
       <Box>
@@ -174,6 +198,7 @@ export default function Game() {
         </button>
       </Box>
     );
+  // ============ تنظیمات اتاق: اندازه‌ی جدول و مدت بازی؛ در جدول فرد خانه‌ی وسط رایگان است ===========
   if (screen === "setup")
     return (
       <Box>
@@ -209,6 +234,7 @@ export default function Game() {
         </button>
       </Box>
     );
+  // ============ ورود با کد ۵ رقمی؛ فقط رقم پذیرفته می‌شود و دکمه تا کامل شدن کد غیرفعال است ===========
   if (screen === "join")
     return (
       <Box>
@@ -235,18 +261,21 @@ export default function Game() {
       </Box>
     );
 
+  // ============ تا رسیدن اولین داده از سرور، پیام «در حال اتصال» نشان داده می‌شود ===========
   if (!room || !sess)
     return (
       <Box>
         <p className="sub">Connecting…</p>
       </Box>
     );
+  // ============ me: جایگاه بازیکن فعلی (۰ یا ۱) در فهرست دو نفره ===========
   const me = room.players.findIndex((p) => p.id === sess.pid);
   const commit = () => {
     setEditing(false);
     renamePlayer(room.code, sess.pid, draft);
   };
 
+  // ============ لابی: نمایش کد اتاق، نام بازیکن‌ها و دکمه‌ی آماده؛ وقتی هر دو آماده شوند سرور بازی را شروع می‌کند ===========
   if (room.phase === "lobby")
     return (
       <Box wide>
@@ -314,6 +343,7 @@ export default function Game() {
       </Box>
     );
 
+  // ============ صفحه‌ی نتیجه: برنده، امتیاز و تعداد اشتباه‌ها و دکمه‌ی بازی دوباره ===========
   if (room.phase === "finished") {
     const w = room.players.find((p) => p.id === room.winner);
     return (
@@ -345,10 +375,12 @@ export default function Game() {
     );
   }
 
+  // ============ زمان باقی‌مانده = زمان پایان (از سرور) − زمان فعلی؛ با جبران اختلاف ساعت کلاینت و سرور ===========
   const left = Math.max(0, room.endsAt - (now + skew)),
     total = room.minutes * 60000;
   const mm = Math.floor(left / 60000),
     ss = String(Math.floor((left % 60000) / 1000)).padStart(2, "0");
+  // ============ فقط در نوبت خودم می‌توانم کارت بزنم ===========
   const myTurn = room.turn === me;
   return (
     <main className="play">
@@ -376,6 +408,7 @@ export default function Game() {
         className="grid"
         style={{ gridTemplateColumns: `repeat(${room.size}, 1fr)` }}
       >
+        {/* ============ رسم کارت‌ها: با کلاس up می‌چرخند، با done (جفت‌شده) طلایی می‌شوند و فقط در نوبت من و برای کارت رو به پشت قابل کلیک‌اند =========== */}
         {room.cards.map((c) => (
           <button
             key={c.id}
@@ -390,11 +423,13 @@ export default function Game() {
             onClick={() => flipCard(room.code, sess.pid, c.id)}
           >
             <span className="in">
+              {/* ============ پشت کارت (نوشته‌ی CODE MATCH) =========== */}
               <span className="back">
                 <span>CODE</span>
                 <span>MATCH</span>
               </span>
               <span className="face">
+                {/* ============ روی کارت: برای خانه‌ی رایگان لبخند، برای بقیه تصویر حیوان (از مسیر /assets/aN.png) =========== */}
                 {c.status === "free" ? (
                   <Svg d={SMILEY} />
                 ) : (
