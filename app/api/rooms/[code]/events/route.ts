@@ -22,7 +22,7 @@ export async function GET(
       send(getView(code));
       // ============ از این به بعد هر تغییر اتاق با تابع send برای این مرورگر فرستاده می‌شود ===========
       off = subscribe(code, send);
-      // ============ هر ۱۵ ثانیه یک پیام ping تا اتصال بیکار بسته نشود ===========
+      // ============ هر ۱۵ ثانیه یک پیام ping تا اتصال بیکار بسته نشود ==========
       beat = setInterval(() => ctrl.enqueue(enc.encode(": ping\n\n")), 15000);
       // ============ وقتی مرورگر اتصال را قطع کرد، شنونده و ping پاک می‌شوند ===========
       req.signal.addEventListener("abort", () => {

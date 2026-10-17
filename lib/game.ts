@@ -102,7 +102,7 @@ export function subscribe(code: string, f: (v: View) => void) {
   };
 }
 
-// ============ ساخت اتاق جدید با کد ۵ رقمی یکتا؛ سازنده بازیکن ۱ می‌شود ===========
+// ============ ساخت اتاق جدید با کد ۵ رقمی یکتا؛ سازنده بازیکن ۱ می‌شود ==========
 export function create(size: number, minutes: number) {
   let code = "";
   do {
