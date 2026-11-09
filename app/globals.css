@@ -1,0 +1,379 @@
+:root {
+  --gold: #d4af37;
+  --bg: #000;
+  --fg: #fff;
+  --dim: #1a1a1a;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+body {
+  background: radial-gradient(circle at 50% 0%, #1d1700 0%, #000 55%) no-repeat;
+}
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+.center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.box {
+  width: min(92vw, 380px);
+  border: 2px solid var(--gold);
+  border-radius: 22px;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(10, 8, 0, 0.85);
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.18);
+}
+.box.wide {
+  width: min(94vw, 460px);
+}
+.logo {
+  margin: 0;
+  font-size: clamp(34px, 10vw, 46px);
+  letter-spacing: 0.06em;
+  font-weight: 900;
+}
+.logo span {
+  color: var(--gold);
+}
+h2 {
+  margin: 0 0 4px;
+  font-size: 24px;
+}
+.sub {
+  margin: 4px 0 0;
+  color: #bbb;
+  font-size: 14px;
+  text-align: center;
+}
+.hint {
+  margin: 0;
+  color: var(--gold);
+  font-size: 13px;
+}
+.err {
+  margin: 0;
+  color: #fff;
+  background: #5a0000;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+.btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: 12px;
+  border: 2px solid var(--gold);
+  background: transparent;
+  font-size: 18px;
+  font-weight: 700;
+  transition: 0.15s;
+}
+.btn:hover {
+  background: rgba(212, 175, 55, 0.15);
+}
+.btn.gold {
+  background: var(--gold);
+  color: #000;
+}
+.btn.gold:hover {
+  filter: brightness(1.1);
+}
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.btn.small {
+  width: auto;
+  padding: 6px 16px;
+  font-size: 14px;
+}
+.link {
+  background: none;
+  border: 0;
+  color: #bbb;
+  text-decoration: underline;
+  font-size: 14px;
+}
+.chips {
+  display: flex;
+  gap: 10px;
+}
+.chip {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: 2px solid var(--gold);
+  background: transparent;
+  font-weight: 700;
+}
+.chip.on {
+  background: var(--gold);
+  color: #000;
+}
+.codein,
+.code {
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 0.35em;
+  text-align: center;
+  color: var(--gold);
+}
+.codein {
+  width: 100%;
+  background: #0d0d0d;
+  border: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 10px 0 10px 0.35em;
+  color: var(--fg);
+}
+.code {
+  padding-left: 0.35em;
+}
+.slots {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #333;
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.slot.ready {
+  border-color: var(--gold);
+}
+.slot.empty {
+  justify-content: center;
+  color: #888;
+  border-style: dashed;
+}
+.slot input {
+  flex: 1;
+  min-width: 0;
+  background: #0d0d0d;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  color: #fff;
+  padding: 6px 8px;
+  font: inherit;
+}
+.nm {
+  flex: 1;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nm b {
+  color: #999;
+  font-weight: 400;
+}
+.pen {
+  background: none;
+  border: 0;
+  padding: 2px;
+  color: var(--gold);
+  width: 26px;
+  height: 26px;
+}
+.pen svg {
+  width: 100%;
+  height: 100%;
+}
+.tag {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--gold);
+  white-space: nowrap;
+}
+.play {
+  min-height: 100vh;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.hud {
+  display: flex;
+  gap: 10px;
+  width: min(94vw, 600px);
+}
+.pl {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 2px solid #333;
+  border-radius: 14px;
+  padding: 8px 12px;
+  flex-wrap: wrap;
+  transition: 0.2s;
+}
+.pl.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 18px rgba(212, 175, 55, 0.5);
+}
+.pts {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--gold);
+}
+.combo {
+  width: 100%;
+  font-size: 12px;
+  color: var(--gold);
+}
+.time {
+  width: min(94vw, 600px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 99px;
+  background: #222;
+  overflow: hidden;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transition: width 0.3s linear;
+}
+.turn {
+  margin: 0;
+  color: var(--gold);
+  font-weight: 700;
+}
+.grid {
+  display: grid;
+  gap: clamp(5px, 1.4vw, 10px);
+  width: min(94vw, 56vh, 600px);
+}
+.card {
+  aspect-ratio: 1;
+  perspective: 700px;
+  background: none;
+  border: 0;
+  padding: 0;
+  container-type: inline-size;
+}
+.card:disabled {
+  cursor: default;
+}
+.in {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+.up .in {
+  transform: rotateY(180deg);
+}
+.back,
+.face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14%;
+  backface-visibility: hidden;
+  border: 2px solid var(--gold);
+}
+.back {
+  flex-direction: column;
+  gap: 2cqw;
+  background: radial-gradient(circle at 50% 35%, #2a2100, #0a0800 70%);
+  box-shadow:
+    inset 0 0 0 3px #000,
+    inset 0 0 0 4.5px rgba(212, 175, 55, 0.55);
+  color: #fff;
+  font-weight: 900;
+  font-size: 17cqw;
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+.back span:last-child {
+  color: var(--gold);
+}
+.card:not(:disabled):hover .back {
+  filter: brightness(1.3);
+}
+.face {
+  background: #0b0b0b;
+  color: #fff;
+  transform: rotateY(180deg);
+}
+.face svg {
+  width: 58%;
+  height: 58%;
+}
+.done .face {
+  color: var(--gold);
+  box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
+}
+.free .face {
+  color: var(--gold);
+  background: #1a1500;
+}
+
+.free .sm2 {
+  display: none;
+}
+.free:hover .sm1,
+.free:active .sm1 {
+  display: none;
+}
+.free:hover .sm2,
+.free:active .sm2 {
+  display: inline;
+  fill: rgba(255, 226, 122, 0.2);
+}
+.free .face svg {
+  transition:
+    color 0.25s,
+    filter 0.25s;
+}
+.free:hover .face,
+.free:active .face {
+  border-color: #ffe27a;
+  box-shadow:
+    0 0 16px var(--gold),
+    inset 0 0 14px rgba(212, 175, 55, 0.35);
+}
+.free:hover .face svg,
+.free:active .face svg {
+  color: #fff1b0;
+  filter: drop-shadow(0 0 2px #ffe27a) drop-shadow(0 0 7px var(--gold))
+    drop-shadow(0 0 16px var(--gold));
+}
