@@ -79,7 +79,6 @@ export default function Game() {
   }, []);
 
   useEffect(() => {
-    // rejoin after a page reload
     const s = sessionStorage.getItem("cm");
     if (s) {
       setSess(JSON.parse(s));

@@ -3,7 +3,7 @@ import * as game from "@/lib/game";
 
 type Res = { ok: boolean; error?: string; code?: string; playerId?: string };
 const okCode = (c: unknown): c is string =>
-  typeof c === "string" && /^\d{5}$/.test(c); // arguments come from the network
+  typeof c === "string" && /^\d{5}$/.test(c); 
 
 export async function createRoom(size: number, minutes: number): Promise<Res> {
   if (![3, 4, 5].includes(size) || ![3, 5, 7].includes(minutes))

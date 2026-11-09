@@ -7,14 +7,13 @@ export type Room = {
   code: string; size: number; minutes: number; players: Player[];
   phase: "lobby" | "playing" | "finished"; cards: Card[];
   turn: number; pending: number[]; endsAt: number; round: number;
-  winner: string | null;               // player id, "draw" or null
+  winner: string | null;            
   timer?: ReturnType<typeof setTimeout>;
 };
 export type View = Omit<Room, "cards" | "timer"> & {
   cards: { id: number; status: Card["status"]; icon?: string }[]; now: number;
 };
 
-// State lives on globalThis so hot reload does not wipe it (single server process).
 const g = globalThis as unknown as { rooms?: Map<string, Room>; subs?: Map<string, Set<(v: View) => void>> };
 const rooms = (g.rooms ??= new Map<string, Room>());
 const subs = (g.subs ??= new Map<string, Set<(v: View) => void>>());
@@ -27,7 +26,6 @@ function shuffle<T>(a: T[]): T[] {
   return b;
 }
 
-// What clients may see: the icon of a face-down card is never sent.
 export function view(r: Room): View {
   const { cards, timer, ...rest } = r; void timer;
   return { ...rest, now: Date.now(), cards: cards.map((c) => c.status === "hidden" ? { id: c.id, status: c.status } : { id: c.id, status: c.status, icon: c.icon }) };
@@ -64,9 +62,8 @@ export function setReady(code: string, pid: string, ready: boolean) {
   publish(r);
 }
 
-// Every round gets a fresh shuffle, so card positions change each time.
 function start(r: Room) {
-  const total = r.size * r.size, free = total % 2 ? (total - 1) / 2 : -1;   // odd board: centre tile is free
+  const total = r.size * r.size, free = total % 2 ? (total - 1) / 2 : -1;  
   const icons = shuffle(Object.keys(ICONS)).slice(0, Math.floor(total / 2));
   const faces = shuffle([...icons, ...icons]);
   r.cards = Array.from({ length: total }, (_, i) =>
@@ -92,16 +89,16 @@ export function rematch(code: string) {
 
 export function flip(code: string, pid: string, id: number) {
   const r = rooms.get(code);
-  if (!r || r.phase !== "playing" || r.players[r.turn]?.id !== pid || r.pending.length >= 2) return;   // not your turn
+  if (!r || r.phase !== "playing" || r.players[r.turn]?.id !== pid || r.pending.length >= 2) return;  
   const c = r.cards[id];
   if (!c || c.status !== "hidden") return;
   c.status = "up"; r.pending.push(id);
   if (r.pending.length === 2) {
     const [a, b] = r.pending.map((i) => r.cards[i]), p = r.players[r.turn];
-    if (a.icon === b.icon) {                       // match: 10 points + 5 per earlier consecutive match
+    if (a.icon === b.icon) {                     
       a.status = b.status = "matched"; p.score += 10 + 5 * p.streak; p.streak++; r.pending = [];
       if (r.cards.every((x) => x.status === "matched" || x.status === "free")) finish(r);
-    } else {                                       // mismatch: show 1s, then pass the turn
+    } else {                               
       p.streak = 0; p.wrong++;
       setTimeout(() => { if (r.phase !== "playing") return; a.status = b.status = "hidden"; r.pending = []; r.turn = 1 - r.turn; publish(r); }, 1000);
     }
