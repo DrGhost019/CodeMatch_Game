@@ -377,3 +377,11 @@ h2 {
   filter: drop-shadow(0 0 2px #ffe27a) drop-shadow(0 0 7px var(--gold))
     drop-shadow(0 0 16px var(--gold));
 }
+
+.face { overflow: hidden; }
+.face img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  user-select: none;
+}

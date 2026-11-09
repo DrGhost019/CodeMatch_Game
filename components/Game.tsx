@@ -9,7 +9,7 @@ import {
   rematch,
 } from "@/app/actions";
 import { ICONS } from "@/lib/icons";
-import type { View } from "@/lib/game"; 
+import type { View } from "@/lib/game";
 
 type Screen = "home" | "mode" | "setup" | "join" | "room" | "bye";
 type Res = { ok: boolean; error?: string; code?: string; playerId?: string };
@@ -72,6 +72,11 @@ export default function Game() {
   const [copied, setCopied] = useState(false);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState("");
+  useEffect(() => {
+    Object.values(ICONS).forEach((src) => {
+      new Image().src = src;
+    });
+  }, []);
 
   useEffect(() => {
     // rejoin after a page reload
@@ -92,7 +97,6 @@ export default function Game() {
     setScreen("home");
   };
   useEffect(() => {
-
     if (!sess) return;
     const es = new EventSource(`/api/rooms/${sess.code}/events`);
     es.onmessage = (e) => {
@@ -120,7 +124,7 @@ export default function Game() {
   const exit = () => {
     window.close();
     setTimeout(() => go("bye"), 200);
-  }; 
+  };
   const copy = (t: string) => {
     if (navigator.clipboard && window.isSecureContext)
       navigator.clipboard.writeText(t);
@@ -392,9 +396,11 @@ export default function Game() {
                 <span>MATCH</span>
               </span>
               <span className="face">
-                <Svg
-                  d={c.status === "free" ? SMILEY : (ICONS[c.icon ?? ""] ?? "")}
-                />
+                {c.status === "free" ? (
+                  <Svg d={SMILEY} />
+                ) : (
+                  <img src={ICONS[c.icon ?? ""]} alt="" draggable={false} />
+                )}
               </span>
             </span>
           </button>
